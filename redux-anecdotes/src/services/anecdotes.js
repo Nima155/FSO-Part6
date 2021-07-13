@@ -8,3 +8,9 @@ export function getAll() {
 export function postAnecdote(content) {
 	return axios.post(BASE_URL, content).then((res) => res.data)
 }
+export function voteAndecdote(id, content) {
+	return axios.put(`${BASE_URL}/${id}`, {
+		...content,
+		votes: content.votes + 1,
+	})
+}

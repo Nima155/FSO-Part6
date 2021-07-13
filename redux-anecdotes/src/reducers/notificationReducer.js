@@ -5,14 +5,7 @@ const initialState = {
 export default function notificationReducer(state = initialState, action) {
 	console.log(action)
 	switch (action.type) {
-		case "ERROR":
-			return { ...state, message: "Something went horribly wrong" }
-		case "ANECDOTE":
-			return {
-				...state,
-				message: `you created "${action.payload.text.content}"`,
-			}
-		case "VOTE":
+		case "ANY_NOTIF":
 			return { ...state, message: action.payload.msg }
 		case "SHOW":
 			return { ...state, show: action.payload.show }
@@ -21,7 +14,21 @@ export default function notificationReducer(state = initialState, action) {
 	}
 	return state
 }
-
+// global timer handle for internal use
+let timer
+export function setNotification(msg, delay) {
+	return async (dispatch) => {
+		clearTimeout(timer) // reset previous timer if any...
+		dispatch({
+			type: "ANY_NOTIF",
+			payload: { msg },
+		})
+		dispatch(toggleShow(true))
+		timer = setTimeout(() => {
+			dispatch(toggleShow(false))
+		}, delay * 1000)
+	}
+}
 export function toggleShow(show) {
 	return {
 		type: "SHOW",

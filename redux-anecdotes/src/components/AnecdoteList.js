@@ -1,9 +1,9 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { submitVote } from "../reducers/anecdoteReducer"
-import { toggleShow } from "../reducers/notificationReducer"
+import { setNotification } from "../reducers/notificationReducer"
 
-export default function AnecdoteList({ timerReference }) {
+export default function AnecdoteList() {
 	const anecdotes = useSelector(({ anecdoteReducer, filterReducer }) => {
 		// filtering based on the query
 		return anecdoteReducer.filter((ele) =>
@@ -11,14 +11,11 @@ export default function AnecdoteList({ timerReference }) {
 		)
 	})
 	const dispatch = useDispatch()
-	const vote = (id, content) => {
-		dispatch(submitVote(id, `you voted for "${content}"`))
-		dispatch(toggleShow(true))
-		// reset the timer so that the notification is always shown for at least 5 seconds
-		clearTimeout(timerReference.current)
-		timerReference.current = setTimeout(() => {
-			dispatch(toggleShow(false))
-		}, 5000)
+	const vote = (id, content, votes) => {
+		// not exactly great..
+		dispatch(submitVote(id, { content, votes }))
+		// show notification for an specified amount of time
+		dispatch(setNotification(`Voted for: "${content}"`, 5))
 	}
 
 	return (
@@ -30,7 +27,11 @@ export default function AnecdoteList({ timerReference }) {
 						<div>{anecdote.content}</div>
 						<div>
 							has {anecdote.votes}
-							<button onClick={() => vote(anecdote.id, anecdote.content)}>
+							<button
+								onClick={() =>
+									vote(anecdote.id, anecdote.content, anecdote.votes)
+								}
+							>
 								vote
 							</button>
 						</div>

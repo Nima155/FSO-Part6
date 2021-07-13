@@ -1,23 +1,17 @@
 import React from "react"
-import { useDispatch } from "react-redux"
+import { connect } from "react-redux"
 import { anecdoteCreator } from "../reducers/anecdoteReducer"
-import { toggleShow } from "../reducers/notificationReducer"
+import { setNotification } from "../reducers/notificationReducer"
 
-const AnecdoteForm = ({ timerReference }) => {
-	const dispatch = useDispatch()
+const AnecdoteForm = (props) => {
 	const addNewAnecdote = async (event) => {
 		// prevent page refresh
 		event.preventDefault()
 		// create the anecdote
-		dispatch(anecdoteCreator(event.target.anecdote.value))
+		props.anecdoteCreator(event.target.anecdote.value)
+		props.setNotification(`You created: "${event.target.anecdote.value}"`, 5)
 		// set form text to empty
 		event.target.anecdote.value = ""
-
-		dispatch(toggleShow(true))
-		clearTimeout(timerReference.current)
-		timerReference.current = setTimeout(() => {
-			dispatch(toggleShow(false))
-		}, 5000)
 	}
 	return (
 		<>
@@ -31,4 +25,9 @@ const AnecdoteForm = ({ timerReference }) => {
 		</>
 	)
 }
-export default AnecdoteForm
+
+const mapDispatchToProps = {
+	setNotification,
+	anecdoteCreator,
+}
+export default connect(null, mapDispatchToProps)(AnecdoteForm) // automatically dispatches all things returned by the action creators
