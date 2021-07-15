@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux"
 import { intializeAnecdote } from "./reducers/anecdoteReducer"
 
 const App = () => {
-	// this is a reference to a timer.. used for showing notifications for an specific amount of time
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(intializeAnecdote())
